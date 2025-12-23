@@ -26,26 +26,11 @@ export const App: React.FC = () => {
   const getSortedGoods = (): string[] => {
     switch (sortType) {
       case SortType.ALPHABET:
-        const alphabetOrder = [
-          'Jam',
-          'Ice cream',
-          'Honey',
-          'Garlic',
-          'Fish',
-          'Dumplings',
-          'Eggs',
-          'Carrot',
-          'Bread',
-          'Apple',
-        ];
-
-        return [...goodsFromServer].sort(
-          (a, b) => alphabetOrder.indexOf(a) - alphabetOrder.indexOf(b),
-        );
+        return [...goodsFromServer].sort((a, b) => a.localeCompare(b));
       case SortType.LENGTH:
         return [...goodsFromServer].sort((a, b) => a.length - b.length);
       case SortType.REVERSE:
-        return [...goodsFromServer].slice().reverse();
+        return [...goodsFromServer].reverse();
       case SortType.NONE:
       default:
         return goodsFromServer;
