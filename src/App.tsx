@@ -1,83 +1,69 @@
 import React, { useState } from 'react';
+import './App.scss';
 
-enum SortType {
-  NONE = 'none',
-  ALPHABET = 'alphabet',
-  LENGTH = 'length',
-  REVERSE = 'reverse',
+export interface Good {
+  name: string;
 }
 
-const goodsFromServer: string[] = [
-  'Dumplings',
-  'Carrot',
-  'Eggs',
-  'Ice cream',
-  'Apple',
-  'Bread',
-  'Fish',
-  'Honey',
-  'Jam',
-  'Garlic',
+const goodsFromServer: Good[] = [
+  { name: 'Dumplings' },
+  { name: 'Carrot' },
+  { name: 'Eggs' },
+  { name: 'Ice cream' },
+  { name: 'Apple' },
+  { name: 'Bread' },
+  { name: 'Fish' },
+  { name: 'Honey' },
+  { name: 'Jam' },
+  { name: 'Garlic' },
 ];
 
 export const App: React.FC = () => {
-  const [sortType, setSortType] = useState<SortType>(SortType.NONE);
+  const [goods, setGoods] = useState<Good[]>([...goodsFromServer]);
 
-  const getSortedGoods = (): string[] => {
-    switch (sortType) {
-      case SortType.ALPHABET:
-        return [...goodsFromServer].sort((a, b) => a.localeCompare(b));
-      case SortType.LENGTH:
-        return [...goodsFromServer].sort((a, b) => a.length - b.length);
-      case SortType.REVERSE:
-        return [...goodsFromServer].reverse();
-      case SortType.NONE:
-      default:
-        return goodsFromServer;
-    }
+  const isChanged = goods.some((g, i) => g.name !== goodsFromServer[i].name);
+
+  const handleReverse = () => {
+    setGoods(prev => [...prev].reverse());
   };
 
-  const visibleGoods = getSortedGoods();
+  const handleSortAlphabetically = () => {
+    setGoods([...goodsFromServer].sort((a, b) => a.name.localeCompare(b.name)));
+  };
 
-  const getButtonClass = (type: SortType) =>
-    sortType === type ? '' : 'is-light';
+  const handleSortByLength = () => {
+    setGoods(
+      [...goodsFromServer].sort((a, b) => a.name.length - b.name.length),
+    );
+  };
+
+  const handleReset = () => {
+    setGoods([...goodsFromServer]);
+  };
 
   return (
     <div className="App">
-      <button
-        type="button"
-        className={getButtonClass(SortType.ALPHABET)}
-        onClick={() => setSortType(SortType.ALPHABET)}
-      >
-        Sort alphabetically
-      </button>
-
-      <button
-        type="button"
-        className={getButtonClass(SortType.LENGTH)}
-        onClick={() => setSortType(SortType.LENGTH)}
-      >
-        Sort by length
-      </button>
-
-      <button
-        type="button"
-        className={getButtonClass(SortType.REVERSE)}
-        onClick={() => setSortType(SortType.REVERSE)}
-      >
-        Reverse
-      </button>
-
-      {sortType !== SortType.NONE && (
-        <button type="button" onClick={() => setSortType(SortType.NONE)}>
-          Reset
+      <h1>Goods List</h1>
+      <div className="buttons">
+        <button onClick={handleSortAlphabetically} data-cy="SortAlphabetically">
+          Sort Alphabetically
         </button>
-      )}
-
+        <button onClick={handleReverse} data-cy="Reverse">
+          Reverse
+        </button>
+        <button onClick={handleSortByLength} data-cy="SortByLength">
+          Sort by length
+        </button>
+        {isChanged && (
+          <button onClick={handleReset} data-cy="Reset">
+            Reset
+          </button>
+        )}
+      </div>
       <ul>
-        {visibleGoods.map(good => (
-          <li key={good} data-cy="Good">
-            {good}
+        {goods.map(good => (
+          <li key={good.name} data-cy="Good">
+            {good.name}
           </li>
         ))}
       </ul>
